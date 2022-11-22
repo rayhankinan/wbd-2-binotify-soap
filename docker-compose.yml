@@ -1,0 +1,10 @@
+version: '3'
+services:
+  soapservice:
+    container_name: binotify-jax-ws
+    build: .
+    ports:
+      - 8001:8001
+    env_file: .env
+    volumes:
+      - .:/usr/src/app
