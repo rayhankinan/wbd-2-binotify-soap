@@ -22,8 +22,13 @@ public class SubscribeService {
     }
 
     @WebMethod
-    public String approveSubscribe(int creator_id, int subscriber_id, Stat status) throws SQLException {
-        return subscribceController.approveSubscribe(creator_id, subscriber_id, status);
+    public String approveSubscribe(int creator_id, int subscriber_id) throws SQLException {
+        return subscribceController.approveSubscribe(creator_id, subscriber_id);
+    }
+
+    @WebMethod
+    public String rejectSubscribe(int creator_id, int subscriber_id) throws SQLException {
+        return subscribceController.rejectSubscribe(creator_id, subscriber_id);
     }
 
     @WebMethod

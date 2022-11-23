@@ -25,7 +25,7 @@ public class SubscribeController {
         }
     }
 
-    public String approveSubscribe(int creator_id, int subscriber_id, Stat status) throws SQLException {
+    public String approveSubscribe(int creator_id, int subscriber_id) throws SQLException {
         try {
             ResultSet rs = this.conn.createStatement()
             .executeQuery("SELECT * from Subscription where id=" + creator_id + " and subscriber_id=" + subscriber_id);
@@ -33,18 +33,32 @@ public class SubscribeController {
             Stat currentStatus = Stat.valueOf(rs.getString("status"));
             if (currentStatus == Stat.PENDING) {
                 this.conn.createStatement()
-                    .executeUpdate("UPDATE Subscription SET status='" + status + "' where creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
-                if (status == Stat.ACCEPTED) {
-                    return "Subscription approved";
-                }
-                else if (status == Stat.REJECTED) {
-                    return "Subscription rejected";
-                }
-                else {
-                    return "Invalid status";
-                }
+                    .executeUpdate("UPDATE Subscription SET status='ACCEPTED' where creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
+                return "Subscription accepted";
             } else if (currentStatus == Stat.ACCEPTED) {
-                return "Subscription already approved";
+                return "Subscription already accepted";
+            }
+            else {
+                return "Subscription already rejected";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error rejecting subscription";
+        }
+    }
+
+    public String rejectSubscribe(int creator_id, int subscriber_id) throws SQLException {
+        try {
+            ResultSet rs = this.conn.createStatement()
+            .executeQuery("SELECT * from Subscription where creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
+            rs.next();
+            Stat currentStatus = Stat.valueOf(rs.getString("status"));
+            if (currentStatus == Stat.PENDING) {
+                this.conn.createStatement()
+                    .executeUpdate("UPDATE Subscription SET status='REJECTED' where creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
+                return "Subscription rejected";
+            } else if (currentStatus == Stat.ACCEPTED) {
+                return "Subscription already accepted";
             }
             else {
                 return "Subscription already rejected";
@@ -52,8 +66,7 @@ public class SubscribeController {
         } catch (Exception e) {
             e.printStackTrace();
             return "Error approving subscription";
-        }
-        
+        } 
     }
 
     public List<Subscribe> getAllReqSubscribe() throws SQLException {
