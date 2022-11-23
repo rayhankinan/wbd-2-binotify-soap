@@ -7,19 +7,12 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-
 import binotify.model.Subscribe;
 import binotify.enums.Stat;
 
-@WebService
-@SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
 public class SubscribeController {
     public final Connection conn = new Database().getConnection();
 
-    @WebMethod
     public String createSubscribe(int creator_id, int subscriber_id) {
         try {
             Statement smt = this.conn.createStatement();
@@ -32,7 +25,6 @@ public class SubscribeController {
         }
     }
 
-    @WebMethod
     public String approveSubscribe(int creator_id, int subscriber_id, Stat status) throws SQLException {
         try {
             ResultSet rs = this.conn.createStatement()
@@ -64,7 +56,6 @@ public class SubscribeController {
         
     }
 
-    @WebMethod
     public List<Subscribe> getAllReqSubscribe() throws SQLException {
         try {
             List<Subscribe> req = new ArrayList<>();
@@ -85,7 +76,6 @@ public class SubscribeController {
         
     }
 
-    @WebMethod
     public Stat checkStatus(int creator_id, int subscriber_id) throws SQLException {
         try {
             ResultSet rs = this.conn.createStatement()

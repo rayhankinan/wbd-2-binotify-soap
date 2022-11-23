@@ -2,6 +2,6 @@
 <endpoints xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime" version="2.0">
     <endpoint
             name="SubscribeWebService"
-            implementation="binotify.controller.SubscribeController"
+            implementation="binotify.service.SubscribeService"
             url-pattern="/api/subscribe"/>
 </endpoints>
