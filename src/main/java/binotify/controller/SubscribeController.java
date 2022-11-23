@@ -65,7 +65,7 @@ public class SubscribeController {
     }
 
     @WebMethod
-    public List<Subscribe> getAllReqSubscribes() throws SQLException {
+    public List<Subscribe> getAllReqSubscribe() throws SQLException {
         try {
             List<Subscribe> req = new ArrayList<>();
             ResultSet rs = this.conn.createStatement()
