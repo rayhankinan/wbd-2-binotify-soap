@@ -28,7 +28,7 @@ public class SubscribeController {
     public String approveSubscribe(int creator_id, int subscriber_id) throws SQLException {
         try {
             ResultSet rs = this.conn.createStatement()
-            .executeQuery("SELECT * from Subscription where id=" + creator_id + " and subscriber_id=" + subscriber_id);
+            .executeQuery("SELECT * from Subscription where creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
             rs.next();
             Stat currentStatus = Stat.valueOf(rs.getString("status"));
             if (currentStatus == Stat.PENDING) {
