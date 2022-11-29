@@ -4,10 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
-import binotify.model.Subscribe;
+import binotify.model.*;
 import binotify.enums.Stat;
 
 public class SubscribeRepository {
@@ -29,7 +27,9 @@ public class SubscribeRepository {
         try {
             ResultSet rs = this.conn.createStatement()
             .executeQuery("SELECT * from Subscription where creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
-            rs.next();
+            if (rs.next() == false) {
+                return "Subscription not found";
+            }
             Stat currentStatus = Stat.valueOf(rs.getString("status"));
             if (currentStatus == Stat.PENDING) {
                 this.conn.createStatement()
@@ -51,7 +51,9 @@ public class SubscribeRepository {
         try {
             ResultSet rs = this.conn.createStatement()
             .executeQuery("SELECT * from Subscription where creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
-            rs.next();
+            if (rs.next() == false) {
+                return "Subscription not found";
+            }
             Stat currentStatus = Stat.valueOf(rs.getString("status"));
             if (currentStatus == Stat.PENDING) {
                 this.conn.createStatement()
@@ -69,24 +71,38 @@ public class SubscribeRepository {
         } 
     }
 
-    public List<Subscribe> getAllReqSubscribe() throws SQLException {
+    public DataPagination getAllReqSubscribe(int page, int rows) throws SQLException {
         try {
-            List<Subscribe> req = new ArrayList<>();
+            DataPagination data = new DataPagination();
             ResultSet rs = this.conn.createStatement()
-                    .executeQuery("SELECT * from Subscription where status='PENDING'");
+                    .executeQuery("SELECT * from Subscription where status='PENDING' limit " + rows + " offset " + (page - 1) * rows);
             while(rs.next()){
                 Subscribe s = new Subscribe();
                 s.setCreator(rs.getInt("creator_id"));
                 s.setSubscriber(rs.getInt("subscriber_id"));
                 s.setStatus(Stat.valueOf(rs.getString("status")));
-                req.add(s);
+                data.getData().add(s);
             }
-            return req;
+            int pageCount = this.getPageCount(rows);
+            data.setPageCount(pageCount);
+            return data;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
-        
+    }
+
+    public int getPageCount(int rows) throws SQLException {
+        try {
+            ResultSet rs = this.conn.createStatement()
+                    .executeQuery("SELECT count(*) from Subscription where status='PENDING'");
+            rs.next();
+            int count = rs.getInt(1);
+            return (int) Math.ceil((double) count / rows);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     public Stat checkStatus(int creator_id, int subscriber_id) throws SQLException {
@@ -96,7 +112,6 @@ public class SubscribeRepository {
             if (rs.next() == false) {
                 return Stat.NODATA;
             }
-            rs.next();
             return Stat.valueOf(rs.getString("status"));
         } catch (Exception e) {
             e.printStackTrace();

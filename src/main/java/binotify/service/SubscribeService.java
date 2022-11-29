@@ -1,13 +1,12 @@
 package binotify.service;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
-import binotify.model.Subscribe;
+import binotify.model.DataPagination;
 import binotify.repository.SubscribeRepository;
 import binotify.enums.Stat;
 
@@ -32,12 +31,17 @@ public class SubscribeService {
     }
 
     @WebMethod
-    public List<Subscribe> getAllReqSubscribe() throws SQLException {
-        return subscribceRepository.getAllReqSubscribe();
+    public DataPagination getAllReqSubscribe(int page, int rows) throws SQLException {
+        return subscribceRepository.getAllReqSubscribe(page, rows);
     }
 
     @WebMethod
     public Stat checkStatus(int creator_id, int subscriber_id) throws SQLException {
         return subscribceRepository.checkStatus(creator_id, subscriber_id);
+    }
+
+    @WebMethod
+    public int getPageCount(int rows) throws SQLException {
+        return subscribceRepository.getPageCount(rows);
     }
 }
