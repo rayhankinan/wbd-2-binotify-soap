@@ -1,4 +1,4 @@
-package binotify.controller;
+package binotify.repository;
 
 import java.sql.*;
 import io.github.cdimascio.dotenv.Dotenv;

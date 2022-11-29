@@ -8,36 +8,36 @@ import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
 import binotify.model.Subscribe;
+import binotify.repository.SubscribeRepository;
 import binotify.enums.Stat;
-import binotify.controller.SubscribeController;
 
 @WebService
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
 public class SubscribeService {
-    private static final SubscribeController subscribceController = new SubscribeController();
+    private static final SubscribeRepository subscribceRepository = new SubscribeRepository();
 
     @WebMethod
     public String createSubscribe(int creator_id, int subscriber_id) {
-        return subscribceController.createSubscribe(creator_id, subscriber_id);
+        return subscribceRepository.createSubscribe(creator_id, subscriber_id);
     }
 
     @WebMethod
     public String approveSubscribe(int creator_id, int subscriber_id) throws SQLException {
-        return subscribceController.approveSubscribe(creator_id, subscriber_id);
+        return subscribceRepository.approveSubscribe(creator_id, subscriber_id);
     }
 
     @WebMethod
     public String rejectSubscribe(int creator_id, int subscriber_id) throws SQLException {
-        return subscribceController.rejectSubscribe(creator_id, subscriber_id);
+        return subscribceRepository.rejectSubscribe(creator_id, subscriber_id);
     }
 
     @WebMethod
     public List<Subscribe> getAllReqSubscribe() throws SQLException {
-        return subscribceController.getAllReqSubscribe();
+        return subscribceRepository.getAllReqSubscribe();
     }
 
     @WebMethod
     public Stat checkStatus(int creator_id, int subscriber_id) throws SQLException {
-        return subscribceController.checkStatus(creator_id, subscriber_id);
+        return subscribceRepository.checkStatus(creator_id, subscriber_id);
     }
 }

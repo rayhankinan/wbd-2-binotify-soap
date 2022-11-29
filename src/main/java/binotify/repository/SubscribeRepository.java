@@ -1,4 +1,4 @@
-package binotify.controller;
+package binotify.repository;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -10,7 +10,7 @@ import java.util.List;
 import binotify.model.Subscribe;
 import binotify.enums.Stat;
 
-public class SubscribeController {
+public class SubscribeRepository {
     public final Connection conn = new Database().getConnection();
 
     public String createSubscribe(int creator_id, int subscriber_id) {
@@ -93,14 +93,14 @@ public class SubscribeController {
         try {
             ResultSet rs = this.conn.createStatement()
             .executeQuery("SELECT status FROM Subscription WHERE creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
-            rs.next();
-            if (rs.getString("status") == null) {
-                return null;
+            if (rs.next() == false) {
+                return Stat.NODATA;
             }
+            rs.next();
             return Stat.valueOf(rs.getString("status"));
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return Stat.NODATA;
         }
     } 
 }
