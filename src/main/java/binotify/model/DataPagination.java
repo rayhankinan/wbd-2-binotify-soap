@@ -1,9 +1,15 @@
 package binotify.model;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataPagination {
     private int pageCount;
     private List<Subscribe> data;
+
+    public DataPagination() {
+        this.pageCount = 0;
+        this.data = new ArrayList<>();
+    }
 
     public int getPageCount() {
         return pageCount;

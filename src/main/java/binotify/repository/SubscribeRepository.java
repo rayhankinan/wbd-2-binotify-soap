@@ -81,7 +81,7 @@ public class SubscribeRepository {
                 s.setCreator(rs.getInt("creator_id"));
                 s.setSubscriber(rs.getInt("subscriber_id"));
                 s.setStatus(Stat.valueOf(rs.getString("status")));
-                data.getData().add(s);
+                data.addData(s);
             }
             int pageCount = this.getPageCount(rows);
             data.setPageCount(pageCount);
