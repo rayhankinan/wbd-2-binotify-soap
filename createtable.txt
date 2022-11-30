@@ -11,5 +11,7 @@ CREATE TABLE `subscription` (
   `creator_id` int NOT NULL,
   `subscriber_id` int NOT NULL,
   `status` enum('PENDING','ACCEPTED','REJECTED') NOT NULL DEFAULT 'PENDING',
+  `creator_name` char(255) NOT NULL,
+  `subscriber_name` char(255) NOT NULL,
   PRIMARY KEY (`creator_id`,`subscriber_id`)
 )

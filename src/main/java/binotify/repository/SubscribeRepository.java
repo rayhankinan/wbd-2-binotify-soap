@@ -11,10 +11,11 @@ import binotify.enums.Stat;
 public class SubscribeRepository {
     public final Connection conn = new Database().getConnection();
 
-    public String createSubscribe(int creator_id, int subscriber_id) {
+    public String createSubscribe(int creator_id, int subscriber_id, String creator_name, String subscriber_name) {
         try {
             Statement smt = this.conn.createStatement();
-            String sql = "insert into Subscription(creator_id, subscriber_id, status) values(" + creator_id + ", " + subscriber_id + ", 'PENDING')";
+            String sql = "insert into Subscription(creator_id, subscriber_id, status, creator_name, subscriber_name)" +
+            "values(" + creator_id + ", " + subscriber_id + ", 'PENDING', '" + creator_name + "', '" + subscriber_name + "')";
             smt.executeUpdate(sql);
             return "Subscription created, wait for approval";
         } catch (Exception e){
@@ -78,8 +79,10 @@ public class SubscribeRepository {
                     .executeQuery("SELECT * from Subscription where status='PENDING' limit " + rows + " offset " + (page - 1) * rows);
             while(rs.next()){
                 Subscribe s = new Subscribe();
-                s.setCreator(rs.getInt("creator_id"));
-                s.setSubscriber(rs.getInt("subscriber_id"));
+                s.setCreatorID(rs.getInt("creator_id"));
+                s.setSubscriberID(rs.getInt("subscriber_id"));
+                s.setCreatorName(rs.getString("creator_name"));
+                s.setSubscriberName(rs.getString("subscriber_name"));
                 s.setStatus(Stat.valueOf(rs.getString("status")));
                 data.addData(s);
             }

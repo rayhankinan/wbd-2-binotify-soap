@@ -3,24 +3,26 @@ package binotify.model;
 import binotify.enums.Stat;
 
 public class Subscribe {
-    private int creator;
-    private int subscriber;
+    private int creatorID;
+    private int subscriberID;
+    private String creatorName;
+    private String subscriberName;
     private Stat status;
 
-    public int getCreator() {
-        return creator;
+    public int getCreatorID() {
+        return creatorID;
     }
 
-    public void setCreator(int creator) {
-        this.creator = creator;
+    public void setCreatorID(int creatorID) {
+        this.creatorID = creatorID;
     }
 
-    public int getSubscriber() {
-        return subscriber;
+    public int getSubscriberID() {
+        return subscriberID;
     }
 
-    public void setSubscriber(int subscriber) {
-        this.subscriber = subscriber;
+    public void setSubscriberID(int subscriberID) {
+        this.subscriberID = subscriberID;
     }
 
     public Stat getStatus() {
@@ -31,11 +33,27 @@ public class Subscribe {
         this.status = status;
     }
 
+    public String getCreatorName() {
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
+
+    public String getSubscriberName() {
+        return subscriberName;
+    }
+
+    public void setSubscriberName(String subscriberName) {
+        this.subscriberName = subscriberName;
+    }
+
     @Override
     public String toString() {
         return "Subscribe{" +
-                "creator=" + creator +
-                ", subscriber=" + subscriber +
+                "creatorName=" + creatorName +
+                ", subscriberName=" + subscriberName +
                 ", status=" + status +
                 '}';
     }

@@ -9,7 +9,7 @@ services:
     volumes:
       - .:/usr/src/app
     networks:
-      - soap-network
+      - soap-services
   mysql:
     container_name: db-soapservice
     image: mysql:latest
@@ -20,9 +20,11 @@ services:
     volumes:
       - ./db:/var/lib/mysql
     networks:
-      - soap-network
+      - soap-services
 volumes:
   db:
     driver: local
 networks:
-  soap-network:
+  soap-services:
+    external:
+      name: binotify-rest-service_default

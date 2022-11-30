@@ -16,8 +16,8 @@ public class SubscribeService {
     private static final SubscribeRepository subscribceRepository = new SubscribeRepository();
 
     @WebMethod
-    public String createSubscribe(int creator_id, int subscriber_id) {
-        return subscribceRepository.createSubscribe(creator_id, subscriber_id);
+    public String createSubscribe(int creator_id, int subscriber_id, String creator_name, String subscriber_name) {
+        return subscribceRepository.createSubscribe(creator_id, subscriber_id, creator_name, subscriber_name);
     }
 
     @WebMethod
