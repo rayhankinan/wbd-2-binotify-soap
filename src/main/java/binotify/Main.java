@@ -1,7 +1,7 @@
 package binotify;
 
 import binotify.middleware.LoggerServlet;
-import binotify.service.SubscribeService;
+import binotify.service.SubscriptionService;
 import binotify.util.HibernateUtil;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         HibernateUtil.getSessionFactory();
 
-        Endpoint endpoint = Endpoint.create(new SubscribeService());
+        Endpoint endpoint = Endpoint.create(new SubscriptionService());
 
         List<Handler> handlerChain = endpoint.getBinding().getHandlerChain();
         handlerChain.add(new LoggerServlet());

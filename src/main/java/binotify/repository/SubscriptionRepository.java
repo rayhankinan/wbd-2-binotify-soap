@@ -13,20 +13,20 @@ import javax.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-public class SubscribeRepository {
+public class SubscriptionRepository {
     public String createSubscribe(int creator_id, int subscriber_id, String creator_name, String subscriber_name) {
         try {
-            Subscribe subscribe = new Subscribe();
-            subscribe.setCreatorID(creator_id);
-            subscribe.setSubscriberID(subscriber_id);
-            subscribe.setCreatorName(creator_name);
-            subscribe.setSubscriberName(subscriber_name);
+            Subscription subscription = new Subscription();
+            subscription.setCreatorID(creator_id);
+            subscription.setSubscriberID(subscriber_id);
+            subscription.setCreatorName(creator_name);
+            subscription.setSubscriberName(subscriber_name);
 
             SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
             Session session = sessionFactory.getCurrentSession();
 
             session.beginTransaction();
-            session.save(subscribe);
+            session.save(subscription);
             session.getTransaction().commit();
 
             return "Subscription created, wait for approval";
@@ -42,18 +42,18 @@ public class SubscribeRepository {
             Session session = sessionFactory.getCurrentSession();
 
             session.beginTransaction();
-            Subscribe subscribe = session.get(Subscribe.class, new Subscribe(creator_id, subscriber_id));
+            Subscription subscription = session.get(Subscription.class, new Subscription(creator_id, subscriber_id));
 
-            if (subscribe == null) {
+            if (subscription == null) {
                 session.getTransaction().commit();
                 return "Subscription not found";
             }
 
-            Stat currentStatus = subscribe.getStatus();
+            Stat currentStatus = subscription.getStatus();
 
             if (currentStatus == Stat.PENDING) {
-                subscribe.setStatus(Stat.ACCEPTED);
-                session.save(subscribe);
+                subscription.setStatus(Stat.ACCEPTED);
+                session.save(subscription);
                 session.getTransaction().commit();
 
                 return "Subscription accepted";
@@ -76,18 +76,18 @@ public class SubscribeRepository {
             Session session = sessionFactory.getCurrentSession();
 
             session.beginTransaction();
-            Subscribe subscribe = session.get(Subscribe.class, new Subscribe(creator_id, subscriber_id));
+            Subscription subscription = session.get(Subscription.class, new Subscription(creator_id, subscriber_id));
 
-            if (subscribe == null) {
+            if (subscription == null) {
                 session.getTransaction().commit();
                 return "Subscription not found";
             }
 
-            Stat currentStatus = subscribe.getStatus();
+            Stat currentStatus = subscription.getStatus();
 
             if (currentStatus == Stat.PENDING) {
-                subscribe.setStatus(Stat.REJECTED);
-                session.save(subscribe);
+                subscription.setStatus(Stat.REJECTED);
+                session.save(subscription);
                 session.getTransaction().commit();
 
                 return "Subscription accepted";
@@ -113,14 +113,14 @@ public class SubscribeRepository {
             session.beginTransaction();
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<Subscribe> criteria = builder.createQuery(Subscribe.class);
-            Root<Subscribe> root = criteria.from(Subscribe.class);
+            CriteriaQuery<Subscription> criteria = builder.createQuery(Subscription.class);
+            Root<Subscription> root = criteria.from(Subscription.class);
             Predicate predicate = builder.equal(root.get("status"), Stat.PENDING);
             criteria.select(root).where(predicate);
-            TypedQuery<Subscribe> query = session.createQuery(criteria);
+            TypedQuery<Subscription> query = session.createQuery(criteria);
 
-            List<Subscribe> subscribes = query.setFirstResult((page - 1) * rows).setMaxResults(rows).getResultList();
-            data.setData(subscribes);
+            List<Subscription> subscriptions = query.setFirstResult((page - 1) * rows).setMaxResults(rows).getResultList();
+            data.setData(subscriptions);
 
             int pageCount = this.getPageCount(rows);
             data.setPageCount(pageCount);
@@ -141,7 +141,7 @@ public class SubscribeRepository {
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
-            Root<Subscribe> root = criteria.from(Subscribe.class);
+            Root<Subscription> root = criteria.from(Subscription.class);
             Predicate predicate = builder.equal(root.get("status"), Stat.PENDING);
             criteria.select(builder.count(root)).where(predicate);
             TypedQuery<Long> query = session.createQuery(criteria);
@@ -161,13 +161,13 @@ public class SubscribeRepository {
             Session session = sessionFactory.getCurrentSession();
 
             session.beginTransaction();
-            Subscribe subscribe = session.get(Subscribe.class, new Subscribe(creator_id, subscriber_id));
+            Subscription subscription = session.get(Subscription.class, new Subscription(creator_id, subscriber_id));
             session.getTransaction().commit();
 
-            if (subscribe == null) {
+            if (subscription == null) {
                 return Stat.NODATA;
             }
-            return subscribe.getStatus();
+            return subscription.getStatus();
 
         } catch (Exception e) {
             return Stat.NODATA;
