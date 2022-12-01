@@ -1,16 +1,16 @@
 package binotify.service;
 
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
+import binotify.enums.Stat;
 import binotify.model.DataPagination;
 import binotify.repository.SubscriptionRepository;
-import binotify.enums.Stat;
+import binotify.util.BinotifyAppUtil;
+
+
 import io.github.cdimascio.dotenv.Dotenv;
 
 @WebService
@@ -26,52 +26,31 @@ public class SubscriptionService {
     @WebMethod
     public String approveSubscribe(int creator_id, int subscriber_id) {
         String res = SubscriptionRepository.approveSubscribe(creator_id, subscriber_id);
+
         if (res.equals("Subscription accepted")) {
             try {
-                String SOAP_KEY = Dotenv.load().get("SOAP_KEY", "1234567890");
-                URL url = new URL("http://host.docker.internal:8080/public/subs/update");
-                HttpURLConnection http = (HttpURLConnection) url.openConnection();
-                http.setRequestMethod("PUT");
-                http.setDoOutput(true);
-                http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                String data = "creator_id=" + creator_id + "&subscriber_id=" + subscriber_id + "&status=ACCEPTED" +
-                "&soap_key=" + SOAP_KEY;
-                OutputStreamWriter writer = new OutputStreamWriter(http.getOutputStream());
-                writer.write(data);
-                writer.flush();
-                writer.close();
-                System.out.println(http.getResponseCode() + " " + http.getResponseMessage());
-                http.disconnect();
+                BinotifyAppUtil.acceptSubscription(creator_id, subscriber_id);
             } catch (Exception e) {
-                e.printStackTrace();
                 return res;
             }
         }
+
         return res;
     }
 
     @WebMethod
     public String rejectSubscribe(int creator_id, int subscriber_id) {
         String res =  SubscriptionRepository.rejectSubscribe(creator_id, subscriber_id);
-        try {
-            String SOAP_KEY = Dotenv.load().get("SOAP_KEY", "1234567890");
-            URL url = new URL("http://host.docker.internal:8080/public/subs/update");
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();
-            http.setRequestMethod("PUT");
-            http.setDoOutput(true);
-            http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            String data = "creator_id=" + creator_id + "&subscriber_id=" + subscriber_id + "&status=REJECTED" +
-            "&soap_key=" + SOAP_KEY;
-            OutputStreamWriter writer = new OutputStreamWriter(http.getOutputStream());
-            writer.write(data);
-            writer.flush();
-            writer.close();
-            System.out.println(http.getResponseCode() + " " + http.getResponseMessage());
-            http.disconnect();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return res;
+
+        if (res.equals("Subscription rejected")) {
+            try {
+                BinotifyAppUtil.rejectSubscription(creator_id, subscriber_id);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return res;
+            }
         }
+
         return res;
     }
 

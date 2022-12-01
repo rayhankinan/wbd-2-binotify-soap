@@ -90,7 +90,8 @@ public class SubscriptionRepository {
                 session.save(subscription);
                 session.getTransaction().commit();
 
-                return "Subscription accepted";
+                return "Subscription rejected";
+
             } else if (currentStatus == Stat.ACCEPTED) {
                 session.getTransaction().commit();
                 return "Subscription already accepted";
