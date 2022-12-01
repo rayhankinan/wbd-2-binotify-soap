@@ -27,4 +27,44 @@ public class Logging {
 
     @Column(nullable = false)
     private Date requestedAt;
+
+    public Logging() {
+        // Do nothing
+    }
+
+    public int getID() {
+        return this.ID;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getIP() {
+        return this.IP;
+    }
+
+    public void setIP(String IP) {
+        this.IP = IP;
+    }
+
+    public String getEndpoint() {
+        return this.endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public Date getRequestedAt() {
+        return this.requestedAt;
+    }
+
+    public void setRequestedAt(Date requestedAt) {
+        this.requestedAt = requestedAt;
+    }
 }

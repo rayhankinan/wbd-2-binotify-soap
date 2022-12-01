@@ -31,9 +31,7 @@ public class SubscribeRepository {
 
             return "Subscription created, wait for approval";
 
-        } catch (Exception e){
-            e.printStackTrace();
-
+        } catch (Exception e) {
             return "Error creating subscription";
         }
     }
@@ -68,7 +66,6 @@ public class SubscribeRepository {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             return "Error rejecting subscription";
         }
     }
@@ -102,7 +99,6 @@ public class SubscribeRepository {
                 return "Subscription already rejected";
             }
         } catch (Exception e) {
-            e.printStackTrace();
             return "Error approving subscription";
         } 
     }
@@ -134,7 +130,6 @@ public class SubscribeRepository {
             return data;
 
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -156,7 +151,6 @@ public class SubscribeRepository {
             return (int) Math.ceil((double) count / rows);
 
         } catch (Exception e) {
-            e.printStackTrace();
             return 0;
         }
     }
@@ -176,7 +170,6 @@ public class SubscribeRepository {
             return subscribe.getStatus();
 
         } catch (Exception e) {
-            e.printStackTrace();
             return Stat.NODATA;
         }
     } 
