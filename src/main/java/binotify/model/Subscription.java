@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 @Entity
-public class Subscribe implements Serializable {
+public class Subscription implements Serializable {
     @Id
     @Column(nullable = false)
     private int creatorID;
@@ -26,11 +26,11 @@ public class Subscribe implements Serializable {
     @Column(nullable = false)
     private Stat status = Stat.PENDING;
 
-    public Subscribe() {
+    public Subscription() {
         // Do nothing
     }
 
-    public Subscribe(int creatorID, int subscriberID) {
+    public Subscription(int creatorID, int subscriberID) {
         this.creatorID = creatorID;
         this.subscriberID = subscriberID;
     }
