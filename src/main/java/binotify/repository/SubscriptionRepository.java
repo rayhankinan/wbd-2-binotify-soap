@@ -69,7 +69,7 @@ public class SubscriptionRepository {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error rejecting subscription";
+            return "Error approving subscription";
         }
     }
 
@@ -93,7 +93,7 @@ public class SubscriptionRepository {
                 session.save(subscribe);
                 session.getTransaction().commit();
 
-                return "Subscription accepted";
+                return "Subscription rejected";
             } else if (currentStatus == Stat.ACCEPTED) {
                 session.getTransaction().commit();
                 return "Subscription already accepted";
@@ -103,7 +103,7 @@ public class SubscriptionRepository {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error approving subscription";
+            return "Error rejecting subscription";
         } 
     }
 
