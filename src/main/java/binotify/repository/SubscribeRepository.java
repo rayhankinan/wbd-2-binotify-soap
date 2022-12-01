@@ -1,69 +1,104 @@
 package binotify.repository;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import binotify.model.*;
 import binotify.enums.Stat;
+import binotify.util.HibernateUtil;
+
+import java.util.List;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 public class SubscribeRepository {
-    public final Connection conn = new Database().getConnection();
-
     public String createSubscribe(int creator_id, int subscriber_id, String creator_name, String subscriber_name) {
         try {
-            Statement smt = this.conn.createStatement();
-            String sql = "insert into Subscription(creator_id, subscriber_id, status, creator_name, subscriber_name)" +
-            "values(" + creator_id + ", " + subscriber_id + ", 'PENDING', '" + creator_name + "', '" + subscriber_name + "')";
-            smt.executeUpdate(sql);
+            Subscribe subscribe = new Subscribe();
+            subscribe.setCreatorID(creator_id);
+            subscribe.setSubscriberID(subscriber_id);
+            subscribe.setCreatorName(creator_name);
+            subscribe.setSubscriberName(subscriber_name);
+
+            SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+            Session session = sessionFactory.getCurrentSession();
+
+            session.beginTransaction();
+            session.save(subscribe);
+            session.getTransaction().commit();
+
             return "Subscription created, wait for approval";
+
         } catch (Exception e){
             e.printStackTrace();
+
             return "Error creating subscription";
         }
     }
 
-    public String approveSubscribe(int creator_id, int subscriber_id) throws SQLException {
+    public String approveSubscribe(int creator_id, int subscriber_id) {
         try {
-            ResultSet rs = this.conn.createStatement()
-            .executeQuery("SELECT * from Subscription where creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
-            if (rs.next() == false) {
+            SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+            Session session = sessionFactory.getCurrentSession();
+
+            session.beginTransaction();
+            Subscribe subscribe = session.get(Subscribe.class, new Subscribe(creator_id, subscriber_id));
+
+            if (subscribe == null) {
+                session.getTransaction().commit();
                 return "Subscription not found";
             }
-            Stat currentStatus = Stat.valueOf(rs.getString("status"));
+
+            Stat currentStatus = subscribe.getStatus();
+
             if (currentStatus == Stat.PENDING) {
-                this.conn.createStatement()
-                    .executeUpdate("UPDATE Subscription SET status='ACCEPTED' where creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
+                subscribe.setStatus(Stat.ACCEPTED);
+                session.save(subscribe);
+                session.getTransaction().commit();
+
                 return "Subscription accepted";
             } else if (currentStatus == Stat.ACCEPTED) {
+                session.getTransaction().commit();
                 return "Subscription already accepted";
-            }
-            else {
+            } else {
+                session.getTransaction().commit();
                 return "Subscription already rejected";
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             return "Error rejecting subscription";
         }
     }
 
-    public String rejectSubscribe(int creator_id, int subscriber_id) throws SQLException {
+    public String rejectSubscribe(int creator_id, int subscriber_id) {
         try {
-            ResultSet rs = this.conn.createStatement()
-            .executeQuery("SELECT * from Subscription where creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
-            if (rs.next() == false) {
+            SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+            Session session = sessionFactory.getCurrentSession();
+
+            session.beginTransaction();
+            Subscribe subscribe = session.get(Subscribe.class, new Subscribe(creator_id, subscriber_id));
+
+            if (subscribe == null) {
+                session.getTransaction().commit();
                 return "Subscription not found";
             }
-            Stat currentStatus = Stat.valueOf(rs.getString("status"));
+
+            Stat currentStatus = subscribe.getStatus();
+
             if (currentStatus == Stat.PENDING) {
-                this.conn.createStatement()
-                    .executeUpdate("UPDATE Subscription SET status='REJECTED' where creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
-                return "Subscription rejected";
+                subscribe.setStatus(Stat.REJECTED);
+                session.save(subscribe);
+                session.getTransaction().commit();
+
+                return "Subscription accepted";
             } else if (currentStatus == Stat.ACCEPTED) {
+                session.getTransaction().commit();
                 return "Subscription already accepted";
-            }
-            else {
+            } else {
+                session.getTransaction().commit();
                 return "Subscription already rejected";
             }
         } catch (Exception e) {
@@ -72,50 +107,74 @@ public class SubscribeRepository {
         } 
     }
 
-    public DataPagination getAllReqSubscribe(int page, int rows) throws SQLException {
+    public DataPagination getAllReqSubscribe(int page, int rows) {
         try {
             DataPagination data = new DataPagination();
-            ResultSet rs = this.conn.createStatement()
-                    .executeQuery("SELECT * from Subscription where status='PENDING' limit " + rows + " offset " + (page - 1) * rows);
-            while(rs.next()){
-                Subscribe s = new Subscribe();
-                s.setCreatorID(rs.getInt("creator_id"));
-                s.setSubscriberID(rs.getInt("subscriber_id"));
-                s.setCreatorName(rs.getString("creator_name"));
-                s.setSubscriberName(rs.getString("subscriber_name"));
-                s.setStatus(Stat.valueOf(rs.getString("status")));
-                data.addData(s);
-            }
+
+            SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+            Session session = sessionFactory.getCurrentSession();
+
+            session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Subscribe> criteria = builder.createQuery(Subscribe.class);
+            Root<Subscribe> root = criteria.from(Subscribe.class);
+            Predicate predicate = builder.equal(root.get("status"), Stat.PENDING);
+            criteria.select(root).where(predicate);
+            TypedQuery<Subscribe> query = session.createQuery(criteria);
+
+            List<Subscribe> subscribes = query.setFirstResult((page - 1) * rows).setMaxResults(rows).getResultList();
+            data.setData(subscribes);
+
             int pageCount = this.getPageCount(rows);
             data.setPageCount(pageCount);
+
+            session.getTransaction().commit();
+
             return data;
+
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public int getPageCount(int rows) throws SQLException {
+    public int getPageCount(int rows) {
         try {
-            ResultSet rs = this.conn.createStatement()
-                    .executeQuery("SELECT count(*) from Subscription where status='PENDING'");
-            rs.next();
-            int count = rs.getInt(1);
+            SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+            Session session = sessionFactory.getCurrentSession();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+            Root<Subscribe> root = criteria.from(Subscribe.class);
+            Predicate predicate = builder.equal(root.get("status"), Stat.PENDING);
+            criteria.select(builder.count(root)).where(predicate);
+            TypedQuery<Long> query = session.createQuery(criteria);
+
+            long count = query.getSingleResult();
+
             return (int) Math.ceil((double) count / rows);
+
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
     }
 
-    public Stat checkStatus(int creator_id, int subscriber_id) throws SQLException {
+    public Stat checkStatus(int creator_id, int subscriber_id) {
         try {
-            ResultSet rs = this.conn.createStatement()
-            .executeQuery("SELECT status FROM Subscription WHERE creator_id=" + creator_id + " and subscriber_id=" + subscriber_id);
-            if (rs.next() == false) {
+            SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+            Session session = sessionFactory.getCurrentSession();
+
+            session.beginTransaction();
+            Subscribe subscribe = session.get(Subscribe.class, new Subscribe(creator_id, subscriber_id));
+            session.getTransaction().commit();
+
+            if (subscribe == null) {
                 return Stat.NODATA;
             }
-            return Stat.valueOf(rs.getString("status"));
+            return subscribe.getStatus();
+
         } catch (Exception e) {
             e.printStackTrace();
             return Stat.NODATA;

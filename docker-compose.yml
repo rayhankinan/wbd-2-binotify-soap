@@ -1,10 +1,10 @@
-version: '3'
+version: '3.8'
 services:
   soapservice:
     container_name: binotify-jax-ws
     build: .
     ports:
-      - 8001:8001
+      - "8001:8001"
     env_file: .env
     volumes:
       - .:/usr/src/app
@@ -14,7 +14,7 @@ services:
     container_name: db-soapservice
     image: mysql:latest
     ports:
-      - 3307:3306
+      - "3307:3306"
     env_file: .env
     hostname: db-soap-service
     volumes:
@@ -26,5 +26,4 @@ volumes:
     driver: local
 networks:
   soap-services:
-    external:
-      name: binotify-rest-service_default
+    driver: bridge

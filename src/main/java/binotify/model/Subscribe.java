@@ -2,12 +2,38 @@ package binotify.model;
 
 import binotify.enums.Stat;
 
-public class Subscribe {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.io.Serializable;
+
+@Entity
+public class Subscribe implements Serializable {
+    @Id
+    @Column(nullable = false)
     private int creatorID;
+
+    @Id
+    @Column(nullable = false)
     private int subscriberID;
+
+    @Column(nullable = false)
     private String creatorName;
+
+    @Column(nullable = false)
     private String subscriberName;
-    private Stat status;
+
+    @Column(nullable = false)
+    private Stat status = Stat.PENDING;
+
+    public Subscribe() {
+        // Do nothing
+    }
+
+    public Subscribe(int creatorID, int subscriberID) {
+        this.creatorID = creatorID;
+        this.subscriberID = subscriberID;
+    }
 
     public int getCreatorID() {
         return creatorID;
@@ -51,10 +77,6 @@ public class Subscribe {
 
     @Override
     public String toString() {
-        return "Subscribe{" +
-                "creatorName=" + creatorName +
-                ", subscriberName=" + subscriberName +
-                ", status=" + status +
-                '}';
+        return String.format("Subscribe{creatorName=%s, subscriberName=%s, status=%s}", creatorName, subscriberName, status);
     }
 }
