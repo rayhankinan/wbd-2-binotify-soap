@@ -5,7 +5,7 @@ import java.util.List;
 
 public class DataPagination {
     private int pageCount;
-    private List<Subscribe> data;
+    private List<Subscription> data;
 
     public DataPagination() {
         this.pageCount = 0;
@@ -20,15 +20,15 @@ public class DataPagination {
         this.pageCount = pageCount;
     }
 
-    public List<Subscribe> getData() {
+    public List<Subscription> getData() {
         return data;
     }
 
-    public void setData(List<Subscribe> data) {
+    public void setData(List<Subscription> data) {
         this.data = data;
     }
 
-    public void addData(Subscribe subscribe) {
+    public void addData(Subscription subscribe) {
         this.data.add(subscribe);
     }
 }

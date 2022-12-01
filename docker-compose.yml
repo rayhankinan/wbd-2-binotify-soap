@@ -26,5 +26,4 @@ volumes:
     driver: local
 networks:
   soap-services:
-    external:
-      name: binotify-rest-service_default 
+    driver: bridge 

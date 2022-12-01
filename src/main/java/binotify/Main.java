@@ -9,6 +9,6 @@ public class Main {
     public static void main(String[] args) {
         HibernateUtil.getSessionFactory();
 
-        Endpoint.publish("http://localhost:8001/api/subscribe", new SubscribeService());
+        Endpoint.publish("http://localhost:8001/api/subscribe", new SubscriptionService());
     }
 }

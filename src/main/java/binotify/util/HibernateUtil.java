@@ -1,7 +1,7 @@
 package binotify.util;
 
 import binotify.model.Logging;
-import binotify.model.Subscribe;
+import binotify.model.Subscription;
 
 import java.util.Properties;
 import org.hibernate.SessionFactory;
@@ -34,7 +34,7 @@ public class HibernateUtil {
         Configuration configuration = new Configuration();
         configuration.setProperties(properties);
         configuration.addAnnotatedClass(Logging.class);
-        configuration.addAnnotatedClass(Subscribe.class);
+        configuration.addAnnotatedClass(Subscription.class);
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
         SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry);

@@ -13,10 +13,10 @@ import javax.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-public class SubscribeRepository {
+public class SubscriptionRepository {
     public String createSubscribe(int creator_id, int subscriber_id, String creator_name, String subscriber_name) {
         try {
-            Subscribe subscribe = new Subscribe();
+            Subscription subscribe = new Subscription();
             subscribe.setCreatorID(creator_id);
             subscribe.setSubscriberID(subscriber_id);
             subscribe.setCreatorName(creator_name);
@@ -44,7 +44,7 @@ public class SubscribeRepository {
             Session session = sessionFactory.getCurrentSession();
 
             session.beginTransaction();
-            Subscribe subscribe = session.get(Subscribe.class, new Subscribe(creator_id, subscriber_id));
+            Subscription subscribe = session.get(Subscription.class, new Subscription(creator_id, subscriber_id));
 
             if (subscribe == null) {
                 session.getTransaction().commit();
@@ -79,7 +79,7 @@ public class SubscribeRepository {
             Session session = sessionFactory.getCurrentSession();
 
             session.beginTransaction();
-            Subscribe subscribe = session.get(Subscribe.class, new Subscribe(creator_id, subscriber_id));
+            Subscription subscribe = session.get(Subscription.class, new Subscription(creator_id, subscriber_id));
 
             if (subscribe == null) {
                 session.getTransaction().commit();
@@ -117,13 +117,13 @@ public class SubscribeRepository {
             session.beginTransaction();
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<Subscribe> criteria = builder.createQuery(Subscribe.class);
-            Root<Subscribe> root = criteria.from(Subscribe.class);
+            CriteriaQuery<Subscription> criteria = builder.createQuery(Subscription.class);
+            Root<Subscription> root = criteria.from(Subscription.class);
             Predicate predicate = builder.equal(root.get("status"), Stat.PENDING);
             criteria.select(root).where(predicate);
-            TypedQuery<Subscribe> query = session.createQuery(criteria);
+            TypedQuery<Subscription> query = session.createQuery(criteria);
 
-            List<Subscribe> subscribes = query.setFirstResult((page - 1) * rows).setMaxResults(rows).getResultList();
+            List<Subscription> subscribes = query.setFirstResult((page - 1) * rows).setMaxResults(rows).getResultList();
             data.setData(subscribes);
 
             int pageCount = this.getPageCount(rows);
@@ -146,7 +146,7 @@ public class SubscribeRepository {
 
             CriteriaBuilder builder = session.getCriteriaBuilder();
             CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
-            Root<Subscribe> root = criteria.from(Subscribe.class);
+            Root<Subscription> root = criteria.from(Subscription.class);
             Predicate predicate = builder.equal(root.get("status"), Stat.PENDING);
             criteria.select(builder.count(root)).where(predicate);
             TypedQuery<Long> query = session.createQuery(criteria);
@@ -167,7 +167,7 @@ public class SubscribeRepository {
             Session session = sessionFactory.getCurrentSession();
 
             session.beginTransaction();
-            Subscribe subscribe = session.get(Subscribe.class, new Subscribe(creator_id, subscriber_id));
+            Subscription subscribe = session.get(Subscription.class, new Subscription(creator_id, subscriber_id));
             session.getTransaction().commit();
 
             if (subscribe == null) {
