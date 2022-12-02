@@ -25,7 +25,7 @@ Binotify. Web Service ini dibangun dengan menggunakan JAX WS dan di deploy denga
 
   
 ## Basis Data Terkait
-![Database](./screenshots/SS.png)
+![Database](./screenshot/SS.png)
 
 ## Pembagian Kerja
 - Setup Docker : 13520101
