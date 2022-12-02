@@ -20,17 +20,24 @@ public class SubscriptionService {
     private static final SubscriptionRepository SubscriptionRepository = new SubscriptionRepository();
 
     @WebMethod
-    public String createSubscribe(int creator_id, int subscriber_id, String creator_name, String subscriber_name) {
+    public String createSubscribe(int creator_id, int subscriber_id, String creator_name, String subscriber_name, String api_key) {
+        if (!api_key.equals(Dotenv.load().get("APP_KEY"))) {
+            return "Not authorized";
+        }
         return SubscriptionRepository.createSubscribe(creator_id, subscriber_id, creator_name, subscriber_name);
     }
 
     @WebMethod
-    public String approveSubscribe(int creator_id, int subscriber_id) {
+    public String approveSubscribe(int creator_id, int subscriber_id, String api_key) {
+        if (!api_key.equals(Dotenv.load().get("REST_KEY"))) {
+            return "Not authorized";
+        }
+
         String res = SubscriptionRepository.approveSubscribe(creator_id, subscriber_id);
 
         if (res.equals("Subscription accepted")) {
             try {
-                String SOAP_KEY = Dotenv.load().get("SOAP_KEY", "1234567890");
+                String SOAP_KEY = Dotenv.load().get("REST_KEY", "1234567890");
                 URL url = new URL("http://host.docker.internal:8080/public/subs/update");
                 HttpURLConnection http = (HttpURLConnection) url.openConnection();
                 http.setRequestMethod("PUT");
@@ -53,12 +60,16 @@ public class SubscriptionService {
     }
 
     @WebMethod
-    public String rejectSubscribe(int creator_id, int subscriber_id) {
+    public String rejectSubscribe(int creator_id, int subscriber_id, String api_key) {
+        if (!api_key.equals(Dotenv.load().get("REST_KEY"))) {
+            return "Not authorized";
+        }
+
         String res =  SubscriptionRepository.rejectSubscribe(creator_id, subscriber_id);
 
         if (res.equals("Subscription rejected")) {
             try {
-                String SOAP_KEY = Dotenv.load().get("SOAP_KEY", "1234567890");
+                String SOAP_KEY = Dotenv.load().get("REST_KEY", "1234567890");
                 URL url = new URL("http://host.docker.internal:8080/public/subs/update");
                 HttpURLConnection http = (HttpURLConnection) url.openConnection();
                 http.setRequestMethod("PUT");
@@ -81,7 +92,10 @@ public class SubscriptionService {
     }
 
     @WebMethod
-    public DataPagination getAllReqSubscribe(int page, int rows) {
+    public DataPagination getAllReqSubscribe(int page, int rows, String api_key) {
+        if (!api_key.equals(Dotenv.load().get("REST_KEY"))) {
+            return new DataPagination();
+        }
         return SubscriptionRepository.getAllReqSubscribe(page, rows);
     }
 
