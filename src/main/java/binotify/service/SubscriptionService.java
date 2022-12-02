@@ -101,7 +101,7 @@ public class SubscriptionService {
 
     @WebMethod
     public Stat checkStatus(int creator_id, int subscriber_id, String api_key) {
-        if (!api_key.equals(Dotenv.load().get("REST_KEY")) || !api_key.equals(Dotenv.load().get("APP_KEY"))) {
+        if (!api_key.equals(Dotenv.load().get("REST_KEY")) && !api_key.equals(Dotenv.load().get("APP_KEY"))) {
             return Stat.NODATA;
         }
 
