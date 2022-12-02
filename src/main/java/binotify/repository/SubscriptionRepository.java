@@ -66,7 +66,7 @@ public class SubscriptionRepository {
             }
 
         } catch (Exception e) {
-            return "Error rejecting subscription";
+            return "Error approving subscription";
         }
     }
 
@@ -100,7 +100,7 @@ public class SubscriptionRepository {
                 return "Subscription already rejected";
             }
         } catch (Exception e) {
-            return "Error approving subscription";
+            return "Error rejecting subscription";
         } 
     }
 

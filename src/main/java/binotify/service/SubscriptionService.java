@@ -10,9 +10,6 @@ import binotify.model.DataPagination;
 import binotify.repository.SubscriptionRepository;
 import binotify.util.BinotifyAppUtil;
 
-
-import io.github.cdimascio.dotenv.Dotenv;
-
 @WebService
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
 public class SubscriptionService {
@@ -46,7 +43,6 @@ public class SubscriptionService {
             try {
                 BinotifyAppUtil.rejectSubscription(creator_id, subscriber_id);
             } catch (Exception e) {
-                e.printStackTrace();
                 return res;
             }
         }
